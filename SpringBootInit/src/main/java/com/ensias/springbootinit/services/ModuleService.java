@@ -3,6 +3,8 @@ package com.ensias.springbootinit.services;
 import com.ensias.springbootinit.Repository.ModuleRepository;
 import com.ensias.springbootinit.model.Module;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,11 +34,15 @@ public class ModuleService {
         moduleRepository.deleteById(id);
     }
 
+    public Page<Module> getAllItems(Pageable pageable) {
+        return moduleRepository.findAll(pageable);
+    }
 
     public Optional<Module> getModule(Long id) {
         return moduleRepository.findById(id);
     }
 
             }
+
 
 

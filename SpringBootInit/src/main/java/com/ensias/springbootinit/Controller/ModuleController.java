@@ -4,6 +4,9 @@ import com.ensias.springbootinit.Repository.ModuleRepository;
 import com.ensias.springbootinit.model.Module;
 import com.ensias.springbootinit.services.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = "*")
 
 
 @RestController
@@ -57,8 +60,26 @@ public class ModuleController {
     }
 
     @RequestMapping(method=RequestMethod.DELETE, value="/modules/{id}")
-    public void supprimerModule(@PathVariable Long id) {
+    public ResponseEntity<Object> supprimerModule(@PathVariable Long id) {
         moduleService.supprimerModule(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/items")
+    public Page<Module> getAllItems(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "5") int size) {
+        return moduleService.getAllItems(PageRequest.of(page, size));
+    }
+
+
+    @GetMapping("/search")
+    public Page<Module> search(@RequestParam(required = false, defaultValue = "") String query, Pageable pageable) {
+        if (query == null || query.isEmpty()) {
+            return moduleRepo.findAll(pageable);
+        } else {
+            return moduleRepo.findByNomContaining(query, pageable);
+        }
     }
 }
 
